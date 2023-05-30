@@ -1,10 +1,10 @@
 function sin(degrees: number): number {
-  let radians = degrees * Math.PI/360;
+  let radians = degrees * Math.PI/180;
   return Math.sin(radians);
 }
 
 function cos(degrees: number): number {
-  let radians = degrees * Math.PI/360;
+  let radians = degrees * Math.PI/180;
   return Math.cos(radians);
 }
 
@@ -55,38 +55,50 @@ class InputHandler {
   }
 }
 
-abstract class AbstractBehavior {
+class BaseBehavior {
   x: number;
   y: number;
-  render(context: CanvasRenderingContext2D) {}
-  draw(context: CanvasRenderingContext2D) {};
-  update(context: CanvasRenderingContext2D) {};
-}
-
-class SidePlaneBehavior extends AbstractBehavior {
-  x: number;
-  y: number;
+  image: CanvasImageSource;
   width: number;
   height: number;
-  image: CanvasImageSource;
   inputHandler: InputHandler;
-
-  speed = 0;
-  maxSpeed = 8;
-
-  spinState = 15;
-  spinPower = 3;
-  spinSpeed = 0;
-  maxSpinSpeed = 30;
-
   constructor(x, y, image, width, height, inputHandler) {
-    super();
     this.x = x;
     this.y = y;
     this.image = image;
     this.width = width;
     this.height = height;
     this.inputHandler = inputHandler;
+  }
+  render(context: CanvasRenderingContext2D) {
+    this.draw(context);
+    this.update(context);
+  }
+  draw(context: CanvasRenderingContext2D) {};
+  update(context: CanvasRenderingContext2D) {};
+}
+
+class SidePlaneBehavior extends BaseBehavior {
+  speed = 0;
+  maxSpeed = 8;
+
+  spinState = -15;
+  spinPower = 3;
+  spinSpeed = 0;
+  maxSpinSpeed = 12;
+  logger: HTMLElement;
+
+  mass = 50;
+  power = 1300;
+
+  constructor(x, y, image, width, height, inputHandler) {
+    super(x, y, image, width, height, inputHandler);
+
+    this.logger = document.getElementById('log');
+  }
+
+  log(text: string): void {
+    this.logger.innerHTML = text;
   }
 
   render(context: CanvasRenderingContext2D): void {
@@ -97,7 +109,7 @@ class SidePlaneBehavior extends AbstractBehavior {
   draw(context: CanvasRenderingContext2D) {
     context.save();
     context.translate(this.x + 120, this.y + 60);
-    context.rotate(this.spinState * Math.PI/360);
+    context.rotate(this.spinState * Math.PI/180);
     context.drawImage(this.image as CanvasImageSource, 0 - this.width * 2 / 3, 0 - this.height / 3, 120, 60)
     context.restore();
   }
@@ -131,6 +143,8 @@ class SidePlaneBehavior extends AbstractBehavior {
     this.y = this.y + this.speed * sin(this.spinState);
     // TODO before or after ?
     this.spinState += this.spinSpeed;
+    this.spinState = this.spinState % 360;
+    this.log(`spinState: ${this.spinState}`);
   }
 
   updateCoordinatesHeavy() {
@@ -138,13 +152,11 @@ class SidePlaneBehavior extends AbstractBehavior {
   }
 
   addSpinSpeed(add: number): void {
-    if (add > 0 && this.spinSpeed < this.maxSpinSpeed) this.spinSpeed += add;
-    if (add < 0 && this.spinSpeed > -this.maxSpinSpeed) this.spinSpeed += add;
+    if (Math.abs(this.spinSpeed) < this.maxSpinSpeed) this.spinSpeed += add;
   }
 
   addSpeed(addSpeed: number) {
-    if (addSpeed > 0 && this.speed < this.maxSpeed) this.speed += addSpeed;
-    if (addSpeed < 0 && this.speed > -this.maxSpeed) this.speed += addSpeed;
+    if (Math.abs(this.speed) < this.maxSpeed) this.speed += addSpeed;
   }
 
   retard(): void {
@@ -234,7 +246,7 @@ class SidePlaneBehavior extends AbstractBehavior {
 class Plane {
   game: Game;
   image = document.getElementById('planeimage');
-  behavior: AbstractBehavior;
+  behavior: BaseBehavior;
 
   constructor(game) {
     this.game = game;
@@ -248,6 +260,7 @@ class Plane {
 
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1') as HTMLCanvasElement;
+
   const ctx = canvas.getContext('2d');
   canvas.width = GAME_CONFIG.width;
   canvas.height = GAME_CONFIG.height;

@@ -14,11 +14,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 function sin(degrees) {
-    var radians = degrees * Math.PI / 360;
+    var radians = degrees * Math.PI / 180;
     return Math.sin(radians);
 }
 function cos(degrees) {
-    var radians = degrees * Math.PI / 360;
+    var radians = degrees * Math.PI / 180;
     return Math.cos(radians);
 }
 var KeyName;
@@ -59,34 +59,43 @@ var InputHandler = /** @class */ (function () {
     }
     return InputHandler;
 }());
-var AbstractBehavior = /** @class */ (function () {
-    function AbstractBehavior() {
+var BaseBehavior = /** @class */ (function () {
+    function BaseBehavior(x, y, image, width, height, inputHandler) {
+        this.x = x;
+        this.y = y;
+        this.image = image;
+        this.width = width;
+        this.height = height;
+        this.inputHandler = inputHandler;
     }
-    AbstractBehavior.prototype.render = function (context) { };
-    AbstractBehavior.prototype.draw = function (context) { };
+    BaseBehavior.prototype.render = function (context) {
+        this.draw(context);
+        this.update(context);
+    };
+    BaseBehavior.prototype.draw = function (context) { };
     ;
-    AbstractBehavior.prototype.update = function (context) { };
+    BaseBehavior.prototype.update = function (context) { };
     ;
-    return AbstractBehavior;
+    return BaseBehavior;
 }());
 var SidePlaneBehavior = /** @class */ (function (_super) {
     __extends(SidePlaneBehavior, _super);
     function SidePlaneBehavior(x, y, image, width, height, inputHandler) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, x, y, image, width, height, inputHandler) || this;
         _this.speed = 0;
         _this.maxSpeed = 8;
-        _this.spinState = 15;
+        _this.spinState = -15;
         _this.spinPower = 3;
         _this.spinSpeed = 0;
-        _this.maxSpinSpeed = 30;
-        _this.x = x;
-        _this.y = y;
-        _this.image = image;
-        _this.width = width;
-        _this.height = height;
-        _this.inputHandler = inputHandler;
+        _this.maxSpinSpeed = 12;
+        _this.mass = 50;
+        _this.power = 1300;
+        _this.logger = document.getElementById('log');
         return _this;
     }
+    SidePlaneBehavior.prototype.log = function (text) {
+        this.logger.innerHTML = text;
+    };
     SidePlaneBehavior.prototype.render = function (context) {
         this.draw(context);
         this.update(context);
@@ -94,7 +103,7 @@ var SidePlaneBehavior = /** @class */ (function (_super) {
     SidePlaneBehavior.prototype.draw = function (context) {
         context.save();
         context.translate(this.x + 120, this.y + 60);
-        context.rotate(this.spinState * Math.PI / 360);
+        context.rotate(this.spinState * Math.PI / 180);
         context.drawImage(this.image, 0 - this.width * 2 / 3, 0 - this.height / 3, 120, 60);
         context.restore();
     };
@@ -131,20 +140,18 @@ var SidePlaneBehavior = /** @class */ (function (_super) {
         this.y = this.y + this.speed * sin(this.spinState);
         // TODO before or after ?
         this.spinState += this.spinSpeed;
+        this.spinState = this.spinState % 360;
+        this.log("spinState: ".concat(this.spinState));
     };
     SidePlaneBehavior.prototype.updateCoordinatesHeavy = function () {
         this.y += 5;
     };
     SidePlaneBehavior.prototype.addSpinSpeed = function (add) {
-        if (add > 0 && this.spinSpeed < this.maxSpinSpeed)
-            this.spinSpeed += add;
-        if (add < 0 && this.spinSpeed > -this.maxSpinSpeed)
+        if (Math.abs(this.spinSpeed) < this.maxSpinSpeed)
             this.spinSpeed += add;
     };
     SidePlaneBehavior.prototype.addSpeed = function (addSpeed) {
-        if (addSpeed > 0 && this.speed < this.maxSpeed)
-            this.speed += addSpeed;
-        if (addSpeed < 0 && this.speed > -this.maxSpeed)
+        if (Math.abs(this.speed) < this.maxSpeed)
             this.speed += addSpeed;
     };
     SidePlaneBehavior.prototype.retard = function () {
@@ -159,7 +166,7 @@ var SidePlaneBehavior = /** @class */ (function (_super) {
         this.spinSpeed = 0;
     };
     return SidePlaneBehavior;
-}(AbstractBehavior));
+}(BaseBehavior));
 // class TopViewBehavior extends AbstractBehavior {
 //   x = 200;
 //   y = 200;

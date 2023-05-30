@@ -8,3 +8,7 @@
 #planeimage {
   display: none;
 }
+
+#logger {
+  font-size: 42px;
+}
