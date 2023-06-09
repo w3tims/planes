@@ -2,9 +2,9 @@
   "name": "planes",
   "version": "1.0.0",
   "description": "Feel yourself a pilot",
-  "main": "script.ts",
+  "private": true,
   "scripts": {
-    "start": "npx tsc -w src/script.ts",
+    "start": "npx tsc && npx webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -13,6 +13,8 @@
   "author": "w3tims",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1"
   }
 }
