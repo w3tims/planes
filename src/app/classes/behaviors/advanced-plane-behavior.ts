@@ -4,15 +4,20 @@ import { BaseBehavior } from "./base-behavior.class";
 import { GAME_CONFIG } from "../../game-config";
 
 interface Force { // сила
-  directionDeg: number;
-  forceNewt: number;
+  direction: number;
+  power: number;
 }
 
 export class AdvancedPlaneBehavior extends BaseBehavior {
   massKg = 2;
   g = 10;
+
   // forces
-  gravityForce: Force = { directionDeg: 90, forceNewt: this.massKg * this.g };
+  gravityForce: Force = {
+    direction: 90,
+    power: this.massKg * this.g
+  };
+
 
   speed = 0;
   maxSpeed = 8;
@@ -27,13 +32,16 @@ export class AdvancedPlaneBehavior extends BaseBehavior {
   power = 1300;
 
   constructor(x, y, image, width, height, inputHandler) {
+    console.log('advancedBehavior');
+    console.log('advancedBehavior');
+    console.log('advancedBehavior');
     super(x, y, image, width, height, inputHandler);
 
     this.logger = document.getElementById('log');
   }
 
   get thurst(): Force {
-    return { directionDeg: this.spinState, forceNewt: this.speed };
+    return { direction: this.spinState, power: this.speed };
   }
 
   log(text: string): void {

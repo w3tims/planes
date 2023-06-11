@@ -10,13 +10,14 @@ export class SidePlaneBehavior extends BaseBehavior {
   spinState = -15;
   spinPower = 1;
   spinSpeed = 0;
-  maxSpinSpeed = 4;
+  maxSpinSpeed = 9;
   logger: HTMLElement;
 
   mass = 50;
   power = 1300;
 
   constructor(x, y, image, width, height, inputHandler) {
+    console.log('sideBehavior')
     super(x, y, image, width, height, inputHandler);
 
     this.logger = document.getElementById('log');

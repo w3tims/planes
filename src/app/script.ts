@@ -1,5 +1,7 @@
 import { GAME_CONFIG } from "./game-config";
 import { Game } from "./classes/game.class";
+import '../style.css';
+import '../assets/plane-24bit.png';
 
 
 window.addEventListener('load', function () {
