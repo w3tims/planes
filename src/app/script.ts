@@ -11,11 +11,11 @@ window.addEventListener('load', function () {
   canvas.width = GAME_CONFIG.width;
   canvas.height = GAME_CONFIG.height;
   const game = new Game(canvas.width, canvas.height);
-  game.render(ctx);
+  game.drawAndUpdate(ctx);
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.render(ctx);
+    game.drawAndUpdate(ctx);
     requestAnimationFrame(animate);
   }
 

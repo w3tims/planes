@@ -14,7 +14,7 @@ export class Game {
     this.plane = new Plane(this);
   }
 
-  render(context: CanvasRenderingContext2D): void {
+  drawAndUpdate(context: CanvasRenderingContext2D): void {
     this.plane.render(context);
   }
 }

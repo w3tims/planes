@@ -1,24 +1,13 @@
 import { InputHandler } from "../input-handler.class";
+import { State2d } from "src/app/typings/interfaces/state-2d.interface";
 
 export class BaseBehavior {
-  x: number;
-  y: number;
-  image: CanvasImageSource;
-  width: number;
-  height: number;
+  state2d: State2d;
+
   inputHandler: InputHandler;
-  constructor(x, y, image, width, height, inputHandler) {
-    this.x = x;
-    this.y = y;
-    this.image = image;
-    this.width = width;
-    this.height = height;
-    this.inputHandler = inputHandler;
+  constructor(state2d) {
+    this.state2d = state2d
   }
-  render(context: CanvasRenderingContext2D) {
-    this.draw(context);
-    this.update(context);
-  }
-  draw(context: CanvasRenderingContext2D) {};
-  update(context: CanvasRenderingContext2D) {};
+  render(context: CanvasRenderingContext2D) {}
+  update(inputHandler: InputHandler) {};
 }
