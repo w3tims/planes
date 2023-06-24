@@ -1,9 +1,6 @@
 import { Game } from "../game.class";
 import { BaseBehavior } from "../behaviors/base-behavior.class";
-import { SidePlaneBehavior } from "../behaviors/side-plane-behavior";
-// import { AdvancedPlaneBehavior } from "src/app/classes/behaviors/advanced-plane-behavior";
 import { AdvancedPlaneBehavior } from "../behaviors/advanced-plane-behavior";
-// import Icon from '../../../assets/plane-24bit.png';
 
 export class Plane {
   game: Game;
@@ -12,8 +9,19 @@ export class Plane {
 
   constructor(game) {
     this.game = game;
-    // this.behavior = new SidePlaneBehavior(200, 200, this.image, 120, 60, this.game.inputHandler);
-    this.behavior = new AdvancedPlaneBehavior(200, 200, this.image, 120, 60, this.game.inputHandler);
+    this.behavior = new AdvancedPlaneBehavior({
+      x: 200,
+      y: 200,
+      image: this.image,
+      width: 120,
+      height: 60,
+      speed: { direction: -15, value: 0 },
+      centerFromLeft: 80,
+      centerFromTop: 20,
+      rotationAngle: -15,
+      massKg: 2,
+      g: 10
+    }, this.game.inputHandler);
   }
 
   render(context: CanvasRenderingContext2D) {

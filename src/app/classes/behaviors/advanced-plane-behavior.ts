@@ -1,45 +1,41 @@
-import { cos } from "../../helpers/cos.function";
-import { sin } from "../../helpers/sin.function";
 import { BaseBehavior } from "./base-behavior.class";
-import { GAME_CONFIG } from "../../game-config";
 import { Vector } from "src/app/typings/interfaces/vector.interface";
+// import { sumVectors } from "src/app/helpers/sum-vectors.function";
+import { InputHandler } from "src/app/classes/input-handler.class";
+// import { IState2d } from "src/app/typings/interfaces/state-2d.interface";
+// import { cos } from "src/app/helpers/cos.function";
+
+const cos = (degrees: number): number => {
+  let radians = degrees * Math.PI/180;
+  return Math.cos(radians);
+}
 
 
 export class AdvancedPlaneBehavior extends BaseBehavior {
-  // gravity
-  massKg = 2;
-  g = 10;
+  rotationPower = 3;
+  rotationSpeed = 0;
+  maxRotationSpeed = 12;
 
-  // spin
-  spinState = -15;
-  spinPower = 3;
-  spinSpeed = 0;
-  maxSpinSpeed = 12;
-
-  // thurst
   motorLoad = 0;
   maxMotorLoad = 8;
 
-  // gravity
   gravityForce: Vector = {
     direction: 90,
     value: this.massKg * this.g
   };
 
-  // thurst
   get thurst(): Vector {
-    return { direction: this.spinState, value: this.motorLoad };
+    return { direction: this.rotationAngle, value: this.motorLoad };
   }
 
-  // lift
   get lift(): Vector {
-    return { direction: this.spinState, value: this.motorLoad };
+    return { direction: this.speed.direction, value: this.motorLoad };
   }
 
   logger: HTMLElement;
 
-  constructor(x, y, image, width, height, inputHandler) {
-    super(x, y, image, width, height, inputHandler);
+  constructor(state2d, inputHandler) {
+    super(state2d, inputHandler);
 
     this.logger = document.getElementById('log');
   }
@@ -48,20 +44,36 @@ export class AdvancedPlaneBehavior extends BaseBehavior {
     this.logger.innerHTML = text;
   }
 
-  override draw(context: CanvasRenderingContext2D) {
+  override render(context: CanvasRenderingContext2D) {
     context.save();
     context.translate(this.x + 120, this.y + 60);
-    context.rotate(this.spinState * Math.PI/180);
+    context.rotate(this.rotationAngle * Math.PI/180);
     context.drawImage(this.image as CanvasImageSource, 0 - this.width * 2 / 3, 0 - this.height / 3, 120, 60)
     context.restore();
   }
 
-  override update(context: CanvasRenderingContext2D) {
+  override update(inputHandler: InputHandler): void {
+    // ======= update powers
+    this.updateSpeed();
+
     this.updateThurst();
-    const sumOfForces: Vector =  sumVectors(
-      this.gravityForce,
-      this.thurst
-    );
+
+    // ======= count overall power
+
+
+
+    // ======= adding overall power to current speed, so getting new speed
+
+
+
+
+    // adding new speed to coordinates
+
+
+    // const sumOfForces: Vector =  sumVectors(
+    //   this.gravityForce,
+    //   this.thurst
+    // );
 
     // this.updateSpeed();
     this.updateCoordinates();
@@ -70,25 +82,25 @@ export class AdvancedPlaneBehavior extends BaseBehavior {
 
   updateThurst() {
     const { ArrowUp, ArrowDown } = this.inputHandler.keysPressed;
-    if (ArrowUp && !ArrowDown) this.addSpeed(1);
-    if (ArrowDown && !ArrowUp) this.addSpeed(-1);
+    if (ArrowUp && !ArrowDown) this.loadMotor(1);
+    if (ArrowDown && !ArrowUp) this.loadMotor(-1);
     if ((!ArrowUp && !ArrowDown) || (ArrowUp && ArrowDown)) this.retard();
   }
 
   updateSpeed() {
     const { ArrowUp, ArrowDown, ArrowLeft, ArrowRight} = this.inputHandler.keysPressed;
-    if (ArrowUp && !ArrowDown) this.addSpeed(1);
-    if (ArrowDown && !ArrowUp) this.addSpeed(-1);
+    if (ArrowUp && !ArrowDown) this.loadMotor(1);
+    if (ArrowDown && !ArrowUp) this.loadMotor(-1);
     if ((!ArrowUp && !ArrowDown) || (ArrowUp && ArrowDown)) this.retard();
 
 
-    if (ArrowLeft && !ArrowRight) this.addSpinSpeed(-this.spinPower);
-    if (ArrowRight && !ArrowLeft) this.addSpinSpeed(this.spinPower);
+    if (ArrowLeft && !ArrowRight) this.addSpinSpeed(-this.rotationPower);
+    if (ArrowRight && !ArrowLeft) this.addSpinSpeed(this.rotationPower);
     if ((!ArrowLeft && !ArrowRight) || (ArrowLeft && ArrowRight)) this.retardSpinning();
   }
 
   updateCoordinates() {
-    // this.x = this.x + this.speed * cos(this.spinState);
+    this.x = this.x + this.speed.value * cos(this.speed.direction);
     // if (this.x > GAME_CONFIG.width) this.x = this.x % GAME_CONFIG.width
     // if (this.x < 0) this.x = GAME_CONFIG.width + this.x;
     //
@@ -104,10 +116,10 @@ export class AdvancedPlaneBehavior extends BaseBehavior {
 
 
   addSpinSpeed(add: number): void {
-    if (Math.abs(this.spinSpeed) < this.maxSpinSpeed) this.spinSpeed += add;
+    if (Math.abs(this.rotationSpeed) < this.maxRotationSpeed) this.rotationSpeed += add;
   }
 
-  addSpeed(addSpeed: number) {
+  loadMotor(addSpeed: number) {
     if (Math.abs(this.motorLoad) < this.maxMotorLoad) this.motorLoad += addSpeed;
   }
 
@@ -119,6 +131,6 @@ export class AdvancedPlaneBehavior extends BaseBehavior {
   retardSpinning(): void {
     // if (this.spinSpeed > 0) this.spinSpeed += -this.spinPower;
     // if (this.spinSpeed < 0) this.spinSpeed += this.spinPower;
-    this.spinSpeed = 0;
+    this.rotationSpeed = 0;
   }
 }
