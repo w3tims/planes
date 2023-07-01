@@ -1,6 +1,6 @@
 import { Vector } from "src/app/typings/interfaces/vector.interface";
-import { cos } from "src/app/helpers/cos.function";
-import { sin } from "src/app/helpers/sin.function";
+import { cos } from "../helpers/cos.function";
+import { sin } from "../helpers/sin.function";
 
 export const sumVectors = (...vectors): Vector => {
   let x = 0;

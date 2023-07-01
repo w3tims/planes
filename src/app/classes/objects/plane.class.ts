@@ -1,6 +1,7 @@
 import { Game } from "../game.class";
 import { BaseBehavior } from "../behaviors/base-behavior.class";
 import { AdvancedPlaneBehavior } from "../behaviors/advanced-plane-behavior";
+import { InputHandler } from "src/app/classes/input-handler.class";
 
 export class Plane {
   game: Game;
@@ -20,11 +21,16 @@ export class Plane {
       centerFromTop: 20,
       rotationAngle: -15,
       massKg: 2,
-      g: 10
+      g: 1,
+
     }, this.game.inputHandler);
   }
 
   render(context: CanvasRenderingContext2D) {
     this.behavior.render(context);
+  }
+
+  update(inputHandler: InputHandler, deltaTime: number) {
+    this.behavior.update(inputHandler);
   }
 }

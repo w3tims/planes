@@ -20,4 +20,10 @@ export class State2d implements IState2d {
   speed: Vector;
   massKg: number;
   g: 10;
+  fps: 30;
+  frameTimer: 0;
+
+  get frameInterval() {
+    return 1000/this.fps;
+  }
 }

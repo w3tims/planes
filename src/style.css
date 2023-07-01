@@ -14,3 +14,7 @@
 #logger {
   font-size: 42px;
 }
+
+#log, #log2, #log3, #log4, #log5 {
+  font-size: 82px;
+}

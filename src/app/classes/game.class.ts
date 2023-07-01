@@ -13,7 +13,8 @@ export class Game {
     this.plane = new Plane(this);
   }
 
-  drawAndUpdate(context: CanvasRenderingContext2D): void {
+  drawAndUpdate(context: CanvasRenderingContext2D, deltaTime: number): void {
     this.plane.render(context);
+    this.plane.update(this.inputHandler, deltaTime);
   }
 }

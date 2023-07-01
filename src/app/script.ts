@@ -11,13 +11,17 @@ window.addEventListener('load', function () {
   canvas.width = GAME_CONFIG.width;
   canvas.height = GAME_CONFIG.height;
   const game = new Game(canvas.width, canvas.height);
-  game.drawAndUpdate(ctx);
+  game.drawAndUpdate(ctx, 0);
 
-  function animate() {
+  let lastTime = 0;
+  function animate(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
+    console.log('deltatime:', deltaTime)
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.drawAndUpdate(ctx);
+    game.drawAndUpdate(ctx, deltaTime);
     requestAnimationFrame(animate);
   }
 
-  animate();
+  animate(lastTime);
 })
